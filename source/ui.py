@@ -4,7 +4,7 @@ from math import sin, cos
 import openpyxl
 
 # Open book
-mice_workbook = openpyxl.load_workbook('data/mice_workbook.xlsx')
+mice_workbook = openpyxl.load_workbook('../data/mice_workbook.xlsx')
 mice_workbook_sheetnames = mice_workbook.sheetnames
 
 
@@ -42,20 +42,20 @@ class Mouse:
             # new_sheet.cell(row=1, column=7).value = "(temp) start record"
             # new_sheet.cell(row=1, column=8).value = "(temp) end record"
 
-            mice_workbook.save("data/mice_workbook.xlsx")
+            mice_workbook.save("../data/mice_workbook.xlsx")
             return new_sheet
 
     def start_recording(self):
         self.start_record = loadLastRecord()
         print("start:", self.start_record)
         self.sheet.cell(row=1, column=7).value = str(self.start_record)
-        mice_workbook.save("data/mice_workbook.xlsx")
+        mice_workbook.save("../data/mice_workbook.xlsx")
 
     def stop_recording(self):
         self.end_record = loadLastRecord()
         print("end:", self.end_record)
         self.sheet.cell(row=1, column=8).value = str(self.end_record)
-        mice_workbook.save("data/mice_workbook.xlsx")
+        mice_workbook.save("../data/mice_workbook.xlsx")
 
         # load start record from sheet
         self.start_record = Measurement(self.sheet.cell(row=1, column=7).value)
@@ -71,7 +71,7 @@ class Mouse:
                     row = str(measurement).split()
                     print("got_in_interval", row)
                     self.sheet.append(row)
-            mice_workbook.save("data/mice_workbook.xlsx")
+            mice_workbook.save("../data/mice_workbook.xlsx")
 
     def get_measurements(self):
         measurements = []
@@ -118,7 +118,7 @@ class Measurement:
 
 # Load saved mice data
 mice_list = []
-with open("mice.txt") as f:
+with open("../mice.txt") as f:
     for line in f:
         mouse = Mouse(line.split()[0])
         mice_list.append(mouse)
@@ -199,7 +199,7 @@ with dpg.window(label="Mice Data Recorder", tag="Primary Window"):
     # dpg.add_image(texture_id)
     # dpg.bind_font(default_font)
 
-    add_and_load_image("assets/mouse.JPG")
+    add_and_load_image("../assets/mouse.JPG")
     dpg.add_text("Make steps:")
     dpg.show_font_manager()
 
