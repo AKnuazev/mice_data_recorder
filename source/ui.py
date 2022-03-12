@@ -14,7 +14,6 @@ def loadLastRecord():
         for line in f:
             if (line != ""):
                 last_line = line
-        print(Measurement(last_line))
         return Measurement(last_line)
 
 
@@ -47,13 +46,13 @@ class Mouse:
 
     def start_recording(self):
         self.start_record = loadLastRecord()
-        print("start:", self.start_record)
+        print("start record:", self.start_record)
         self.sheet.cell(row=1, column=7).value = str(self.start_record)
         mice_workbook.save("../data/mice_workbook.xlsx")
 
     def stop_recording(self):
         self.end_record = loadLastRecord()
-        print("end:", self.end_record)
+        print("end record:", self.end_record)
         self.sheet.cell(row=1, column=8).value = str(self.end_record)
         mice_workbook.save("../data/mice_workbook.xlsx")
 
@@ -69,7 +68,6 @@ class Mouse:
                     got_in_interval = True
                 if got_in_interval:
                     row = str(measurement).split()
-                    print("got_in_interval", row)
                     self.sheet.append(row)
             mice_workbook.save("../data/mice_workbook.xlsx")
 
@@ -79,7 +77,6 @@ class Mouse:
             row_str = ""
             for cell in row:
                 row_str += str(cell.value) + " "
-            print(row_str)
             measurements.append(Measurement(row_str))
         return measurements
 
@@ -137,7 +134,6 @@ def add_and_load_image(image_path, parent=None):
     width, height, channels, data = dpg.load_image(image_path)
 
     with dpg.texture_registry() as reg_id:
-        print(reg_id)
         texture_id = dpg.add_static_texture(width, height, data, parent=reg_id, tag="img333")
     if parent is None:
         return dpg.add_image(texture_id, width=170, height=120)
@@ -149,36 +145,36 @@ def getCurrMouse():
     mouse_name = dpg.get_value('mice_combo_label')
     for mouse in mice_list:
         if mouse.name == mouse_name:
-            print("found mouse, started recording")
+            print("found mouse")
             return mouse
+
+    print(f"❌ Mouse '{mouse_name}' NOT found")
     return None
 
 
 def start_callback():
     mouse = getCurrMouse()
     if mouse:
-        print("found mouse, started recording")
         mouse.start_recording()
+        print("started recording")
 
 
 def stop_callback():
     mouse = getCurrMouse()
     if mouse:
-        print("found mouse, stoped recording")
         mouse.stop_recording()
+        print("stoped recording")
     update_chart()
 
 
 dpg.create_context()
 
-sindatax = []
-sindatay = []
+time_datax = []
+particles_datay = []
 
 
 def update_chart():
     mouse = getCurrMouse()
-    time_datax = []
-    particles_datay = []
     measurements = mouse.get_measurements()
     counter = 0
     for measurement in measurements:
@@ -201,20 +197,24 @@ with dpg.window(label="Mice Data Recorder", tag="Primary Window"):
 
     add_and_load_image("../assets/mouse.JPG")
     dpg.add_text("Make steps:")
-    dpg.show_font_manager()
+    dpg.add_text("")
+    # dpg.show_font_manager()
 
     with dpg.group():
         dpg.add_text("1. Save file in old program")
         dpg.add_checkbox(label="i saved", tag="is_old_saved")
+        dpg.add_text("")
 
     with dpg.group():
         dpg.add_text("2. Choose current mouse (you can edit mice list in mice.txt file)")
         dpg.add_combo(items=mice_list, tag="mice_combo_label", callback=update_chart)
+        dpg.add_text("")
 
     with dpg.group():
         dpg.add_text("3. Choose action")
         dpg.add_button(label="Start", callback=start_callback)
         dpg.add_button(label="Stop", callback=stop_callback)
+        dpg.add_text("")
 
     # create plot
     with dpg.group():
@@ -227,7 +227,7 @@ with dpg.window(label="Mice Data Recorder", tag="Primary Window"):
             dpg.add_plot_axis(dpg.mvYAxis, label="particles", tag="y_axis")
 
             # series belong to a y axis
-            dpg.add_line_series(sindatax, sindatay, label="current mouse", parent="y_axis", tag="series_tag")
+            dpg.add_line_series(time_datax, particles_datay, label="current mouse", parent="y_axis", tag="series_tag")
 
 dpg.create_viewport(title='Mice Data Recorder')  # , width=600, height=200
 dpg.setup_dearpygui()
