@@ -195,7 +195,7 @@ with dpg.window(label="Mice Data Recorder", tag="Primary Window"):
     # dpg.add_image(texture_id)
     # dpg.bind_font(default_font)
 
-    add_and_load_image("../assets/mouse.JPG")
+    add_and_load_image("../assets/mouse_dark.jpg")
     dpg.add_text("Make steps:")
     dpg.add_text("")
     # dpg.show_font_manager()
