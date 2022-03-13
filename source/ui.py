@@ -9,7 +9,7 @@ mice_workbook_sheetnames = mice_workbook.sheetnames
 
 
 def loadLastRecord():
-    with open("measurements.file") as f:
+    with open("../measurements.file") as f:
         last_line = ""
         for line in f:
             if (line != ""):
@@ -60,7 +60,7 @@ class Mouse:
         self.start_record = Measurement(self.sheet.cell(row=1, column=7).value)
 
         # Now we need do get our interval
-        with open("measurements.file") as f:
+        with open("../measurements.file") as f:
             got_in_interval = False
             for line in f:
                 measurement = Measurement(line)
@@ -174,15 +174,17 @@ particles_datay = []
 
 
 def update_chart():
+    new_time_datax = []
+    new_particles_datay = []
     mouse = getCurrMouse()
     measurements = mouse.get_measurements()
     counter = 0
     for measurement in measurements:
-        time_datax.append(counter)
-        particles_datay.append(float(measurement.value1))
+        new_time_datax.append(counter)
+        new_particles_datay.append(float(measurement.value1))
         counter += 1
 
-    dpg.set_value('series_tag', [time_datax, particles_datay])
+    dpg.set_value('series_tag', [new_time_datax, new_particles_datay])
     dpg.set_item_label('series_tag', mouse.name)
 
 
